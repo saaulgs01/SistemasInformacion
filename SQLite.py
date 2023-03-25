@@ -16,7 +16,7 @@ pd.options.display.max_rows= 50
 filename2 = 'devices.json'
 data2 = pd.read_json(filename2)
 #print(data2.shape)
-#print(data2)
+print(data2)
 #print(data2.values)
 
 
@@ -31,15 +31,19 @@ print(df2)
 print("\n")
 
 #df3 = data2.reindex(columns=['analisis'])
-columnas2 = ['puertos_abiertos', 'servicios', 'servicios_inseguros','vulnerabilidades_detectadas']
+columnas2 = ['puertos_abiertos, servicios', 'servicios_inseguros','vulnerabilidades_detectadas']
 df3 = pd.DataFrame(data2['analisis'].tolist()).reindex(columns=columnas2)
 print(df3)
 print("\n")
+
+
 #df3['puertos_abiertos'] = df3['puertos_abiertos'].astype('string')
 #data.to_sql(name='probin',con=conn, if_exists='append')
 #df1.to_sql(name='devices',con=conn, if_exists='append')
 #df2.to_sql(name='responsable',con=conn, if_exists='append')
 #df3.to_sql(name='analisis',con=conn, if_exists='append')
+#df4.to_sql(name='puertos_abiertos',con=conn, if_exists='append')
+
 
 
 
@@ -88,59 +92,113 @@ def sql_create_table(con):
 #sql_fetch(con)
 #sql_delete_table(con)
 
-ej1 = "SELECT COUNT(*) FROM devices"
-result = pd.read_sql_query(ej1, conn)
+#EJERCICIO2 (2 PUNTOS)
+
+#cuestion 1:
+preg1 = "SELECT COUNT(*) as devices FROM devices"
+result = pd.read_sql_query(preg1, conn)
 print(result)
 
-ej1v2 = "select count(*) as nones from devices WHERE localizacion='None'"
-result = pd.read_sql_query(ej1v2,conn)
-print("-------\n")
+preg2 = "SELECT COUNT(*) as campos_None FROM devices where localizacion is 'None'"
+result = pd.read_sql_query(preg2, conn)
+print(result)
+
+#Cuestrion 2:
+preg = "select count(*) as alertas from alertas"
+result = pd.read_sql_query(preg, conn)
+print(result)
+#Cuestion 3:
+
+preg = "select count(*) as Media_puertos from puertos_abiertos"
+preg = "SELECT AVG(device) AS media_puertos_abiertos FROM puertos_abiertos INNER JOIN analisis ON puertos_abiertos.device = analisis.indice"
+result = pd.read_sql_query(preg, conn)
+print(result)
+#cuestion 4:
+
+preg = "select avg(servicios_inseguros) as mediaServicios_inseguros from analisis"
+result = pd.read_sql_query(preg, conn)
+print(result)
+
+preg = "SELECT AVG((puerto - sub.a) * (puerto - sub.a)) as var from puertos_abiertos, (SELECT AVG(puerto) AS a FROM puertos_abiertos) AS sub"
+result = pd.read_sql_query(preg, conn)
+print(result)
+
+#cuestion 5:
+preg = "select avg(vulnerabilidades_detectadas) as media_vulnerabilidades_detectadas from analisis"
+result = pd.read_sql_query(preg, conn)
+print(result)
+#cuestion 6:
+
+preg = "SELECT COUNT(device) as cantidad_maxima, device FROM puertos_abiertos GROUP BY device ORDER BY cantidad_maxima DESC LIMIT 1"
+result = pd.read_sql_query(preg, conn)
+print(result)
+
+preg = "SELECT min(count_val) as cantidad_minima,device FROM (SELECT COUNT(case WHEN puerto IS 'None' then NULL else device END) as count_val, device FROM puertos_abiertos GROUP BY device order by count_val) as counts"
+result = pd.read_sql_query(preg, conn)
+print(result)
+#Cuestion 7:
+
+preg = "select min(vulnerabilidades_detectadas) as min_vul from analisis"
+result = pd.read_sql_query(preg, conn)
+print(result)
+
+preg = "select max(vulnerabilidades_detectadas) as max_vul from analisis"
+result = pd.read_sql_query(preg, conn)
+print(result)
+
+#EJERCICIO3 (2.5 PUNTOS)
+#cuestion 1:
+preg = "select count(vulnerabilidades_detectadas) as vulnerabilidades_detectadas, strftime('%m', fechas) as mes, prioridad  from analisis inner join devices on analisis.indice = devices.indice inner join alertas on devices.ip=alertas.origen or devices.ip=alertas.destino where  strftime('%m', fechas) IN ('07','08') group by prioridad,mes order by mes"
+result = pd.read_sql_query(preg, conn)
+print(result)
+#cuestion 2:
+preg = "select count(vulnerabilidades_detectadas) as campos_none, strftime('%m', fechas) as mes, prioridad  from analisis inner join devices on analisis.indice = devices.indice inner join alertas on devices.ip=alertas.origen or devices.ip=alertas.destino where  localizacion='None' and strftime('%m', fechas) IN ('07','08') group by prioridad,mes order by mes"
+result = pd.read_sql_query(preg, conn)
+print(result)
+
+#cuestion 3:
+preg = "select median(vulnerabilidades_detectadas) as mediana_vulnerabilidades_detectadas, strftime('%m', fechas) as mes, prioridad  from analisis inner join devices on analisis.indice = devices.indice inner join alertas on devices.ip=alertas.origen or devices.ip=alertas.destino where  strftime('%m', fechas) IN ('07','08') group by prioridad,mes order by mes"
+#result = pd.read_sql_query(preg, conn)
+print(result)
+#cuestion 4:
+preg = "select avg(vulnerabilidades_detectadas) as media_vulnerabilidades_detectadas, strftime('%m', fechas) as mes, prioridad  from analisis inner join devices on analisis.indice = devices.indice inner join alertas on devices.ip=alertas.origen or devices.ip=alertas.destino where  strftime('%m', fechas) IN ('07','08') group by prioridad,mes order by mes"
+result = pd.read_sql_query(preg, conn)
+print(result)
+#cuestion 5:
+preg = "select stdev(vulnerabilidades_detectadas) as varvulnerabilidades_detectadas, strftime('%m', fechas) as mes, prioridad  from analisis inner join devices on analisis.indice = devices.indice inner join alertas on devices.ip=alertas.origen or devices.ip=alertas.destino where  strftime('%m', fechas) IN ('07','08') group by prioridad,mes order by mes"
+#result = pd.read_sql_query(preg, conn)
+print(result)
+#cuestion 6:
+preg = "select max(vulnerabilidades_detectadas) as max_vulnerabilidades_detectadas, strftime('%m', fechas) as mes, prioridad  from analisis inner join devices on analisis.indice = devices.indice inner join alertas on devices.ip=alertas.origen or devices.ip=alertas.destino where  strftime('%m', fechas) IN ('07','08') group by prioridad,mes order by mes"
+result = pd.read_sql_query(preg, conn)
+print(result)
+#cuestion 6:
+preg = "select min(vulnerabilidades_detectadas) as min_vulnerabilidades_detectadas, strftime('%m', fechas) as mes, prioridad  from analisis inner join devices on analisis.indice = devices.indice inner join alertas on devices.ip=alertas.origen or devices.ip=alertas.destino where  strftime('%m', fechas) IN ('07','08') group by prioridad,mes order by mes"
+result = pd.read_sql_query(preg, conn)
 print(result)
 
 
-ej2 = "SELECT COUNT(*) FROM alertas"
-result = pd.read_sql_query(ej2, conn)
-print(result)
-
-ej3 = "SELECT AVG(CAST(length(puertos_abiertos) - length(replace(puertos_abiertos, ',', '')) + 1 AS INTEGER)) AS media_puertos_abiertos FROM analisis WHERE puertos_abiertos IS NOT NULL"
-result = pd.read_sql_query(ej3,conn)
-print(result)
 
 
-sql_update(conn)
 
 
-ej3 = "SELECT AVG(CAST(length(COALESCE(puertos_abiertos, '0')) - length(REPLACE(COALESCE(puertos_abiertos, '0'), ',', '')) + 1 AS INTEGER)) AS media_puertos_abiertos FROM analisis"
-result = pd.read_sql_query(ej3,conn)
-print(result)
-
-ej4 = "select avg(servicios_inseguros) as insecure from analisis"
-result = pd.read_sql_query(ej4,conn)
-print(result)
-
-ej5 = "select avg(vulnerabilidades_detectadas) as insecure from analisis"
-result = pd.read_sql_query(ej5,conn)
-print(result)
-
-ej6  = "SELECT min(CAST(length(COALESCE(puertos_abiertos, '0')) - length(REPLACE(COALESCE(puertos_abiertos, '0'), ',', '')) + 1 AS INTEGER)) as minPuertosAbiertos  FROM analisis"
-
-result = pd.read_sql_query(ej6,conn)
-print(result)
-ej6v2 = "SELECT max(CAST(length(COALESCE(puertos_abiertos, '0')) - length(REPLACE(COALESCE(puertos_abiertos, '0'), ',', '')) + 1 AS INTEGER)) as minPuertosAbiertos  FROM analisis"
-result = pd.read_sql_query(ej6v2,conn)
-print(result)
-
-ej7 = "select min(vulnerabilidades_detectadas) as minVul from analisis"
-result = pd.read_sql_query(ej7,conn)
-print(result)
-ej7v2 = "select max(vulnerabilidades_detectadas) as maxVul from analisis"
-result = pd.read_sql_query(ej7v2,conn)
-
-print(result)
 
 
-ejemplo = "SELECT min(CASE WHEN puertos_abiertos = 'None' THEN 0 ELSE (SELECT (CAST(length(COALESCE(puertos_abiertos, '0')) - length(REPLACE(COALESCE(puertos_abiertos, '0'), ',', '')) + 1 AS INTEGER))) END) AS minimo_numero_puertos_abiertos FROM analisis"
-result = pd.read_sql_query(ejemplo,conn)
-print(result)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 conn.close()
