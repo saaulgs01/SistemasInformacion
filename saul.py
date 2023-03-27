@@ -137,7 +137,7 @@ def practica1():
     print("Vulnerabilidades agrupadas por prioridad y mes(JULIO Y AGOSTO):\n")
 
     print("Numero de observaciones encontradas:\n " + str(df_aux.groupby(["PRIORIDAD", "MES"])["vulnerabilidades_detectadas"].sum()))
-    # VALORES AUSENTES????
+    print("\nValores ausentes:\n" + str(df_aux.isna().sum().sum()))
     print("\nMediana:\n" + str(df_aux.groupby(["PRIORIDAD", "MES"])["vulnerabilidades_detectadas"].median()))
     print("\nMedia:\n" + str(str(df_aux.groupby(["PRIORIDAD", "MES"])["vulnerabilidades_detectadas"].mean())))
     print("\nVarianza:\n" + str(str(df_aux.groupby(["PRIORIDAD", "MES"])["vulnerabilidades_detectadas"].var())))
