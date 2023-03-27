@@ -1,5 +1,4 @@
 import sqlite3
-from sqlalchemy import create_engine
 
 import pandas as pd
 
@@ -36,7 +35,7 @@ def practica1():
     df2 = data2.reindex(columns=['responsable'])
     columnas = ['nombre', 'telefono', 'rol']
     df2 = pd.DataFrame(data2['responsable'].tolist()).reindex(columns=columnas)
-    print(data2)
+    #print(data2)
 
 
     df3 = data2.reindex(columns=['analisis'])
@@ -57,7 +56,7 @@ def practica1():
     #cuestion 1:
     preg1 = "SELECT COUNT(*) as devices FROM devices"
     result = pd.read_sql_query(preg1, con)
-    print(result)
+    #print(result)
 
 
     con.close()
