@@ -151,7 +151,7 @@ def practica1():
     # numero de alertas en el tiempo
     df_alertas_42 = df_alertas.reindex(columns=["TIME"])
     df_alertas_42.reset_index(drop=True, inplace=True)
-    print("Numero de alertas en el tiempo:\n" + str(df_alertas_42))
+    print("\nNumero de alertas en el tiempo:\n" + str(df_alertas_42))
     grafico = px.line(df_alertas_42, x="TIME")
     #grafico.show()
 
@@ -159,14 +159,14 @@ def practica1():
 
     df_alertas_43 = df_alertas.reindex(columns=["CLASIFICACION"])
     #df_alertas_43.reset_index(inplace=True)
-    print(df_alertas_43.value_counts())
+    print("\nNumero de alertas por categoria:\n" + str(df_alertas_43["CLASIFICACION"].value_counts().head()))
     grafico = px.bar(df_alertas_43["CLASIFICACION"].value_counts(), log_y=True)
     #grafico.show()
 
     # dispositivos mas vulnerables
     df_analisis_44 = df_analisis.reindex(columns=["ID"])
     df_analisis_44["VULNERABLE"] = df_analisis["SERVICIOS_INSEGUROS"] + df_analisis["VULNERABILIDADES_DETECTADAS"]
-    print(df_analisis_44)
+    print("\nDispositivos mas vulnerables:\n" + str(df_analisis_44))
     grafico = px.bar(df_analisis_44, x='ID', y="VULNERABLE")
     #grafico.show()
 
