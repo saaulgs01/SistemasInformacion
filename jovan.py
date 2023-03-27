@@ -122,7 +122,8 @@ def practica1():
     df_aux.drop_duplicates(inplace=True)
     df_aux.reset_index(drop=True, inplace=True)
 
-    #print(df_aux.head())
+
+    print(df_aux)
 
     print("Alertas graves en julio")
     print("Numero de observaciones: " + str(len(df_aux)))
